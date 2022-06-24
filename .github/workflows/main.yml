@@ -25,6 +25,7 @@ jobs:
         with:
           cdk_subcommand: 'diff'
           actions_comment: true
+          cdk_stack: 'CdkStack'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -34,7 +35,8 @@ jobs:
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v2.1.1
         with:
-          cdk_subcommand: 'diff'
+          cdk_subcommand: 'deploy'
+          cdk_stack: 'CdkStack'
           cdk_args: '--require-approval never'
           actions_comment: false
         env:
