@@ -17,6 +17,7 @@ class CdkStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # Define Lambda layers
         pandas = lambda_.LayerVersion.from_layer_version_attributes(self, 'Pandas',
             layer_version_arn="arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-pandas:4")
 
@@ -26,13 +27,13 @@ class CdkStack(Stack):
         psycopg = lambda_.LayerVersion.from_layer_version_attributes(self, 'Psycopg',
             layer_version_arn="arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-psycopg2-binary:1")
         
-        
+        # instantiate DB credentials using secrets manager
         db_secrets = rds.DatabaseSecret(self, 'postgres-secret',
                     username='postgres',
                     secret_name='postgres-credentials'
                     )
 
-
+        # Create the database
         db = rds.DatabaseInstance(self, "db",
                     engine=rds.DatabaseInstanceEngine.postgres(version=rds.PostgresEngineVersion.VER_13_4),
                     instance_type=ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MICRO),
@@ -43,16 +44,13 @@ class CdkStack(Stack):
                     )
                     )
         
+        # Allow public connection to the db
         db.connections.allow_default_port_from_any_ipv4()
 
+        # Define the function's execution role
         lambda_role = iam.Role(self, "lambda_role",
                     assumed_by=iam.ServicePrincipal("lambda.amazonaws.com")
                     )
-
-        s3_bucket = s3.Bucket(self, 'dataBucket')
-
-        topic = sns.Topic(self, 'deliveryTopic')
-
         lambda_role.add_to_policy(iam.PolicyStatement(
                     resources=["*"],
                     actions=[
@@ -61,7 +59,14 @@ class CdkStack(Stack):
                             "sns:Publish",
                             "secretsmanager:GetSecretValue"]
                     ))
+        # Create the bucket used to store the data
+        s3_bucket = s3.Bucket(self, 'dataBucket')
 
+        # Create the delivery topic
+        topic = sns.Topic(self, 'deliveryTopic')
+
+
+        # Create the function
         function = lambda_.Function(self, "Serverless-ETL",
                     runtime=lambda_.Runtime.PYTHON_3_9,
                     code=lambda_.Code.from_asset("./code"),
@@ -76,12 +81,13 @@ class CdkStack(Stack):
                     }
                     )
 
+        # Allow the function to publish to the topic
         topic.grant_publish(function)
 
+        # Create the event rule and schedule
         rule = events.Rule(self, "Rule",
                     schedule=events.Schedule.expression('cron(0 0 * * ? *)'),
-                    )
-        
+                    )        
         rule.add_target(targets.LambdaFunction(function))
 
 
