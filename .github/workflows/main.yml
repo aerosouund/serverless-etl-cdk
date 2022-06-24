@@ -19,10 +19,7 @@ jobs:
       run:
         working-directory: ~/
     steps:
-    
-      - name: change directory
-        run: cd ..
-    
+
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
         with:
