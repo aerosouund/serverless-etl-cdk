@@ -19,6 +19,8 @@ jobs:
       run:
         working-directory: ./serverless-etl-cdk
     steps:
+      - name: ammar
+        run: ls
 
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
