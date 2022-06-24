@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: ammar
-        run: ls
+        run: pwd
 
       - name: cdk diff
         uses: youyo/aws-cdk-github-actions@v2
