@@ -14,7 +14,6 @@ on:
 jobs:
 
   aws-cdk:
-
     runs-on: ubuntu-latest
     steps:
       - name: AWS CDK GitHub Actions
