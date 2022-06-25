@@ -12,20 +12,6 @@ on:
 
 
 jobs:
-  Explore-GitHub-Actions:
-      runs-on: ubuntu-latest
-      steps:
-        - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-        - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-        - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-        - name: Check out repository code
-          uses: actions/checkout@v3
-        - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-        - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-        - name: List files in the repository
-          run: |
-            ls ${{ github.workspace }}
-        - run: echo "🍏 This job's status is ${{ job.status }}."
 
 
   aws-cdk:
@@ -35,33 +21,31 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
     
-      - name: ammar
-        run: |
-          cd ${{ github.workspace }}
-          python -m pip install --requirement requirements.txt
 
-#       - name: cdk diff
-#         uses: youyo/aws-cdk-github-actions@v2
-#         with:
-#           cdk_version: 2.28.1
-#           cdk_subcommand: 'diff --app python app.py'
-#           cdk_stack: CdkStack
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_DEFAULT_REGION: 'us-east-1'
+      - name: cdk diff
+        uses: youyo/aws-cdk-github-actions@v2
+        with:
+          cdk_version: 2.28.1
+          cdk_subcommand: 'diff'
+          cdk_stack: CdkStack
+          actions_comment: false
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
           
           
-#       - name: cdk deploy
-#         uses: youyo/aws-cdk-github-actions@v2.1.1
-#         with:
-#           cdk_subcommand: 'deploy'
-#           cdk_stack: 'CdkStack'
-#           cdk_args: '--require-approval never'
-#           actions_comment: false
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_DEFAULT_REGION: 'us-east-1'
+      - name: cdk deploy
+        uses: youyo/aws-cdk-github-actions@v2.1.1
+        with:
+          cdk_version: 2.28.1
+          cdk_subcommand: 'deploy'
+          cdk_stack: 'CdkStack'
+          cdk_args: '--require-approval never'
+          actions_comment: false
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
 
 
