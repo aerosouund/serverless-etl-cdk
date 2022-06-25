@@ -24,7 +24,7 @@ jobs:
         uses: youyo/aws-cdk-github-actions@v2
         with:
           cdk_version: 2.28.1
-          cdk_subcommand: 'diff'
+          cdk_subcommand: 'diff --app python app.py'
           cdk_stack: CdkStack
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
