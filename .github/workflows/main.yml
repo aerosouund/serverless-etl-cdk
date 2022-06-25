@@ -22,7 +22,6 @@ jobs:
     steps:
     
       - name: ammar
-        working-directory: ./
         run: |
           cd ${{ github.workspace }}
           python -m pip install --requirement requirements.txt
